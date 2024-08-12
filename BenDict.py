@@ -6,7 +6,7 @@ Created on May 8, 2017
 #-*-coding:utf8;-*-
 
 import sys
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 import sqlite3 as sql
 
 db = sql.connect('/opt/bendict/db/bendict.db')
