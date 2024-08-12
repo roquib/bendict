@@ -11,7 +11,7 @@ BenDict is an English to Bengali dictionary application developed on Python3 and
 ## Dependencies
 
 * python3
-* python3-pyqt4
+* python3-pyqt5
 
 You have install these dependencies to use **BenDict**
 
