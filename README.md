@@ -20,7 +20,7 @@ You have install these dependencies to use **BenDict**
 ### Common Method
 
 ```
-wget https://github.com/nitish94/bendict/archive/master.zip
+wget https://github.com/roquib/bendict/archive/master.zip
 ```
 ```
 unzip master.zip
