@@ -6,42 +6,39 @@ Created on May 8, 2017
 #-*-coding:utf8;-*-
 
 import sys
-from PyQt5 import QtCore, QtGui
+from PyQt6 import QtCore, QtGui, QtWidgets
 import sqlite3 as sql
 
 db = sql.connect('/opt/bendict/db/bendict.db')
-cur=db.cursor()
+cur = db.cursor()
 
 def isEnglish(s):
     return len(s) == len(s.encode())
 
 def transben(s):
-    cur.execute("SELECT a.word FROM english a, bengali b where (a.w_id = b.w_id AND b.word LIKE '%s')"%s)
+    cur.execute("SELECT a.word FROM english a, bengali b WHERE (a.w_id = b.w_id AND b.word LIKE ?)", (f'%{s}%',))
     lst = cur.fetchall()
     for i in lst:
-        tv.insertHtml('<br>%s<br>'%i)
-        
+        tv.insertHtml('<br>%s<br>' % i[0])
+
 def transeng(s):
-    cur.execute("SELECT b.word , b.oppo FROM english a, bengali b where (a.w_id = b.w_id AND a.word LIKE '%s')"%s)
-    en,op = cur.fetchall()[0]
-    tv.insertHtml('<b><u>TRANSLATE<u></b> <br> %s <br>'%en)
+    cur.execute("SELECT b.word , b.oppo FROM english a, bengali b WHERE (a.w_id = b.w_id AND a.word LIKE ?)", (f'%{s}%',))
+    en, op = cur.fetchall()[0]
+    tv.insertHtml('<b><u>TRANSLATE<u></b> <br> %s <br>' % en)
     tv.insertHtml('<br><br><u><b>OPPOSITE/বিপরীত</u></b><br>')
     op = eval(op)
     for i in op:
-        tv.insertHtml('<br>%s<br>'%i)
+        tv.insertHtml('<br>%s<br>' % i)
     tv.insertHtml('<br><u><b>SIMILAR WORDS/ সমার্থক শব্দ</b></u>')
     transben(en)
-        
-    
-    
-        
+
 def logcode():
     tv.insertHtml("<b><font color=red>NO SUCH WORD IN DICTIONARY</b></font>")
 
 def printeng():
     word = entry.text()
     tv.clear()
-    if isEnglish(word) == True:
+    if isEnglish(word):
         try:
             transeng(word)
         except IndexError:
@@ -54,55 +51,53 @@ def printeng():
         except IndexError:
             logcode()
 
-
-
 def b2_clicked():
     entry.clear()
+
 #===============================================================================
 
-app = QtGui.QApplication (sys.argv)
-win = QtGui.QDialog()
+app = QtWidgets.QApplication(sys.argv)
+win = QtWidgets.QDialog()
 
-grid = QtGui.QGridLayout()
+grid = QtWidgets.QGridLayout()
 win.setLayout(grid)
 
-entry = QtGui.QLineEdit()
+entry = QtWidgets.QLineEdit()
 entry.resize(entry.sizeHint())
-grid.addWidget(entry,0,0)
+grid.addWidget(entry, 0, 0)
 
-b1 = QtGui.QPushButton()
+b1 = QtWidgets.QPushButton()
 b1.setText("TRANSLATE")
 b1.resize(b1.sizeHint())
-grid.addWidget(b1,1,0, 1, 2)
+grid.addWidget(b1, 1, 0, 1, 2)
 b1.clicked.connect(printeng)
 
-b2 = QtGui.QPushButton()
+b2 = QtWidgets.QPushButton()
 CIcon = QtGui.QPixmap("/opt/bendict/icons/clean.png")
 b2.setIcon(QtGui.QIcon(CIcon))
 b2.resize(b2.sizeHint())
-grid.addWidget(b2,0,1, )
+grid.addWidget(b2, 0, 1)
 b2.clicked.connect(b2_clicked)
 
-tv = QtGui.QTextEdit(win)
+tv = QtWidgets.QTextEdit(win)
 tv.setReadOnly(True)
 tv.resize(tv.sizeHint())
-grid.addWidget(tv,2,0, 1, 2)
+grid.addWidget(tv, 2, 0, 1, 2)
 
-# stting up icon
-
+# Setting up icon
 app_icon = QtGui.QIcon()
-app_icon.addFile('/opt/bendict/icons/g16.png', QtCore.QSize(16,16))
-app_icon.addFile('/opt/bendict/icons/g24.png', QtCore.QSize(24,24))
-app_icon.addFile('/opt/bendict/icons/g32.png', QtCore.QSize(32,32))
-app_icon.addFile('/opt/bendict/icons/g48.png', QtCore.QSize(48,48))
-app_icon.addFile('/opt/bendict/icons/g256.png', QtCore.QSize(256,256))
+app_icon.addFile('/opt/bendict/icons/g16.png', QtCore.QSize(16, 16))
+app_icon.addFile('/opt/bendict/icons/g24.png', QtCore.QSize(24, 24))
+app_icon.addFile('/opt/bendict/icons/g32.png', QtCore.QSize(32, 32))
+app_icon.addFile('/opt/bendict/icons/g48.png', QtCore.QSize(48, 48))
+app_icon.addFile('/opt/bendict/icons/g256.png', QtCore.QSize(256, 256))
 
 app.setWindowIcon(app_icon)
 
-win.setGeometry(100,100,280,300)
+win.setGeometry(100, 100, 280, 300)
 win.setWindowTitle("BEN DICT")
 win.show()
-sys.exit(app.exec_())
+sys.exit(app.exec())
 
 db.commit()
 db.close()
